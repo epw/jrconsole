@@ -31,3 +31,9 @@ While connected, '>' is the prompt character, '=' gives the evaluated
 result, '!' indicates a Python error occurred.
 
 Control-D to exit.
+
+## Logging
+
+Also implements a JavaScript function, log(), that takes one argument,
+and sends it to the server, where it is written out to
+/tmp/jrconsole.log

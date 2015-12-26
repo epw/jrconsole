@@ -22,3 +22,7 @@ var jrconsole = $.websocket("ws://" + window.location.hostname + ":" + PORT,
 				    }
 				}
 			    });
+
+function log(msg) {
+    jrconsole.send("log", msg);
+}

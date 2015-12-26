@@ -14,20 +14,31 @@ import time
 response_lock = threading.Lock()
 
 class JRConsoleWS(WebSocket):
+    logfile = None
 
     def opened(self):
         CLIThread.instance = self
         WebSocket.opened(self)
+        self.logfile = open("/tmp/jrconsole.log", "a")
+        self.logfile.write("\n")
         print "Found connection from", self.peer_address
         response_lock.release()
 
     def received_message(self, message):
         try:
-            response = json.loads(message.data)["data"]
-            print "=", response
+            response = json.loads(message.data)
+            data = response["data"]
+            if response["type"] == "log":
+                self.logfile.write(data + "\n")
+                self.logfile.flush()
+            elif response["type"] == "evaluated":
+                print "=", data
+                response_lock.release()
+            else:
+                print "! unknown response type", response["type"], ", data:", data
         except Exception as e:
             print "!", e
-        response_lock.release()
+            response_lock.release()
 
 class CLIThread(threading.Thread):
     running = True
