@@ -37,7 +37,7 @@ class JRConsoleWS(WebSocket):
             else:
                 print "! unknown response type", response["type"], ", data:", data
         except Exception as e:
-            print "!", e
+            print "!", type(e), e.message
             response_lock.release()
 
 class CLIThread(threading.Thread):

@@ -244,7 +244,49 @@ $.extend({
 });
 })(jQuery);
 var PORT = 60019;
-var jrconsole = $.websocket("ws://" + window.location.hostname + ":" + PORT,
+var jrconsole;
+
+function create_toast_element() {
+    var style = "div.toast { position: absolute; width: 100%; text-align: center; display: none; z-index: 100 }";
+    style += "span.toast { background-color: #222; color: white; padding: 3px }";
+    $("head").append("<style>" + style + "</style>");
+    var toast_div = document.createElement("div");
+    toast_div.className = "toast";
+    var toast_span = document.createElement("span");
+    toast_span.className = "toast";
+    toast_div.appendChild(toast_span);
+    document.body.appendChild(toast_div);
+}
+$(document).ready(create_toast_element);
+
+function send_toast(msg) {
+    $("span.toast").html(msg);
+    $("div.toast").css("top", window.innerHeight - 100);
+    $("div.toast").fadeIn();
+    setTimeout("$('div.toast').fadeOut()", 1500);
+}
+
+function expand_object(obj) {
+    var expansion = "[object " + typeof(obj);
+    for (key in obj) {
+	expansion += ", " + key;
+    }
+    return expansion + "]";
+}
+
+function connect_opened() {
+    console.log("Opened.");
+    send_toast("Connected to jrconsole server.");
+}
+function connect_closed() {
+    console.log("Closed.");
+    send_toast("Disconnected from jrconsole server.");
+}
+
+function connect() {
+    $.websocketSettings.open = connect_opened;
+    $.websocketSettings.close = connect_closed;
+    jrconsole = $.websocket("ws://" + window.location.hostname + ":" + PORT,
 			    {
 				events: {
 				    toeval: function (e) {
@@ -257,8 +299,18 @@ var jrconsole = $.websocket("ws://" + window.location.hostname + ":" + PORT,
 							 "message": e.message
 							};
 					}
-					jrconsole.send("evaluated",
-						       evaluated);
+					var json;
+					try {
+					    json = $.toJSON(evaluated);
+					    if (typeof(json) == "undefined") {
+						json = expand_object(evaluated);
+					    }
+					} catch (e) {
+					    if (e instanceof TypeError) {
+						json = expand_object(evaluated);
+					    }
+					}
+					jrconsole.send("evaluated", json);
 				    },
 				    command: function (e) {
 					if (e.data == "quit") {
@@ -267,7 +319,8 @@ var jrconsole = $.websocket("ws://" + window.location.hostname + ":" + PORT,
 				    }
 				}
 			    });
-
+}
+$(document).ready(connect);
 function log(msg) {
     jrconsole.send("log", msg);
 }
