@@ -2,10 +2,9 @@
 JavaScript Remote Console
 
 This project implements a REPL for JavaScript using WebSockets. When
-the JavaScript is included in a page, it will attempt to connect to
-the server, which should be running on the same host as the Web
-server. This project's server acts as the JavaScript console,
-remotely.
+jrconsole.js is included in a page, it will attempt to connect to
+jrconsole.py, which should be running on the same host as the Web
+server. jrconsole.py acts as the JavaScript console, remotely.
 
 ## Requirements
 
