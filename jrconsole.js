@@ -275,11 +275,9 @@ function expand_object(obj) {
 }
 
 function connect_opened() {
-    console.log("Opened.");
     send_toast("Connected to jrconsole server.");
 }
 function connect_closed() {
-    console.log("Closed.");
     send_toast("Disconnected from jrconsole server.");
 }
 
