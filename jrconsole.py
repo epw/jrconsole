@@ -23,7 +23,8 @@ class JRConsoleWS(WebSocket):
 
     def received_message(self, message):
         try:
-            print "=", json.loads(message.data)["data"]
+            response = json.loads(message.data)["data"]
+            print "=", response
         except Exception as e:
             print "!", e
         response_lock.release()

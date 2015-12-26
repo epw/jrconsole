@@ -252,7 +252,10 @@ var jrconsole = $.websocket("ws://" + window.location.hostname + ":" + PORT,
 					try {
 					    evaluated = eval(e.data);
 					} catch (e) {
-					    evaluated = e;
+					    evaluated = {"type": "error",
+							 "name": e.name,
+							 "message": e.message
+							};
 					}
 					jrconsole.send("evaluated",
 						       evaluated);
